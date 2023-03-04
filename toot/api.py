@@ -289,7 +289,7 @@ def _direct_timeline_generator(app, user, path, params=None):
     while path:
         response = http.get(app, user, path, params)
         message = response.json()
-        yield [m for m in message if message["visibility"] == "direct"]
+        yield [m for m in message if m["visibility"] == "direct"]
         path = _get_next_path(response.headers)
 
 
