@@ -285,6 +285,14 @@ def _timeline_generator(app, user, path, params=None):
         path = _get_next_path(response.headers)
 
 
+def _direct_timeline_generator(app, user, path, params=None):
+    while path:
+        response = http.get(app, user, path, params)
+        message = response.json()
+        yield [m for m in message if message["visibility"] == "direct"]
+        path = _get_next_path(response.headers)
+
+
 def _notification_timeline_generator(app, user, path, params=None):
     while path:
         response = http.get(app, user, path, params)
@@ -347,6 +355,12 @@ def anon_tag_timeline_generator(instance, hashtag, local=False, limit=20):
     path = f"/api/v1/timelines/tag/{quote(hashtag)}"
     params = {'local': str_bool(local), 'limit': limit}
     return _anon_timeline_generator(instance, path, params)
+
+
+def direct_timeline_generator(app, user, limit=20):
+    path = "/api/v1/timelines/home"
+    params = {"limit": limit}
+    return _direct_timeline_generator(app, user, path, params)
 
 
 def get_media(app: App, user: User, id: str):
