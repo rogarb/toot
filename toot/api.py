@@ -292,7 +292,7 @@ def _direct_timeline_generator(app, user, path, params=None):
         if params is not None and "limit" in list(params):
             while (
                 path
-                and len(filter(lambda m: m["visibility"] == "direct", message))
+                and len(list(filter(lambda m: m["visibility"] == "direct", message)))
                 < params["limit"]
             ):
                 path = _get_next_path(response.headers)
