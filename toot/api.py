@@ -289,6 +289,14 @@ def _direct_timeline_generator(app, user, path, params=None):
     while path:
         response = http.get(app, user, path, params)
         message = response.json()
+        if params is not None and "limit" in list(params):
+            while (
+                path
+                and len(filter(lambda m: m["visibility"] == "direct", message))
+                < params["limit"]
+            ):
+                path = _get_next_path(response.headers)
+                message += http.get(app, user, path, params).json()
         yield [m for m in message if m["visibility"] == "direct"]
         path = _get_next_path(response.headers)
 
